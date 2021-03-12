@@ -3,28 +3,52 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 class Square extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: null
-    };
-  }
+  // Delete the constructor from Square because Square no longer keeps track of the game’s state
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     value: null,
+  //   };
+  // }
 
   render() {
     return (
       <button
         className="square"
-        onClick={() => this.setState({value: 'X'})}
+        // The Square’s onClick prop was specified by the Board
+        onClick={() => this.props.onClick()}
       >
-        {this.state.value}
+        {this.props.value}
       </button>
     );
   }
 }
 
 class Board extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      squares: Array(9).fill(null),
+    }
+  }
+
+  // The state is stored in the Board component instead of the individual Square components
+  handleClick (i) {
+    const squares = this.state.squares.slice();
+    squares[i] = 'X';
+    this.setState({squares: squares});
+  }
+
   renderSquare(i) {
-    return <Square value={i}/>;
+    return (
+      <Square
+        // We’re passing down two props from Board to Square: value and onClick
+        value={this.state.squares[i]}
+        // The onClick prop is a function that Square can call when clicked
+        // The Square calls this.handleClick(i) when clicked
+        onClick={() => this.handleClick(i)}
+      />
+    );
   }
 
   render() {
