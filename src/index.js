@@ -2,26 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-class Square extends React.Component {
-  // Delete the constructor from Square because Square no longer keeps track of the game’s state
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     value: null,
-  //   };
-  // }
-
-  render() {
-    return (
-      <button
-        className="square"
-        // The Square’s onClick prop was specified by the Board
-        onClick={() => this.props.onClick()}
-      >
-        {this.props.value}
-      </button>
-    );
-  }
+// Change the Square to be a function component
+function Square(props) {
+  return (
+    // The Square’s onClick prop was specified by the Board
+    // We have changed this.props to props both times it appears
+    <button className="square" onClick={props.onClick}>
+      {props.value}
+    </button>
+  );
 }
 
 class Board extends React.Component {
@@ -29,14 +18,18 @@ class Board extends React.Component {
     super(props);
     this.state = {
       squares: Array(9).fill(null),
+      xIsNext: true,
     }
   }
 
   // The state is stored in the Board component instead of the individual Square components
   handleClick (i) {
     const squares = this.state.squares.slice();
-    squares[i] = 'X';
-    this.setState({squares: squares});
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    this.setState({
+      squares: squares,
+      xIsNext: !this.state.xIsNext,
+    });
   }
 
   renderSquare(i) {
@@ -52,7 +45,7 @@ class Board extends React.Component {
   }
 
   render() {
-    const status = 'Next player: X';
+    const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
 
     return (
       <div>
